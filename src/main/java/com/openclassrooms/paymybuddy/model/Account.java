@@ -26,7 +26,7 @@ public class Account {
 	private List<Transaction> debitTransactions;
 	@OneToMany(mappedBy = "receiverAccount", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Transaction> creditTransactions;
-	private double balance;
+	private double balance = 0;
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -34,11 +34,7 @@ public class Account {
 	public Account() {
 	}
 
-	public Account(List<Transaction> debitTransactions, List<Transaction> creditTransactions, double balance,
-			User user) {
-		this.debitTransactions = debitTransactions;
-		this.creditTransactions = creditTransactions;
-		this.balance = balance;
+	public Account(User user) {
 		this.user = user;
 	}
 
