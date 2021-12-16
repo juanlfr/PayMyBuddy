@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.config;
+package com.openclassrooms.paymybuddy.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,14 +34,29 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/signUpForm", "/home")
-				.permitAll()
+				.antMatchers("/signUpForm", "/", "/logout").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
-				.defaultSuccessUrl("/transactions", true)
+				.loginPage("/login")
+				.permitAll()
+				.defaultSuccessUrl("/welcome", true)
+				.passwordParameter("password")
+				.usernameParameter("email")
 				.and()
-				.rememberMe();// for 2 weeks
+				.rememberMe()
+				.tokenValiditySeconds(30)
+				.rememberMeParameter("remember-me")
+				.and()
+				.logout()
+				.logoutUrl("/logout");
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web
+				.ignoring()
+				.antMatchers("/resources/**", "/static/**", "/css/**", "/js/**");
 	}
 
 	@Bean

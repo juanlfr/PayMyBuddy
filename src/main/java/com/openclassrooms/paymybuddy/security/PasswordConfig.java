@@ -1,4 +1,4 @@
-package com.openclassrooms.paymybuddy.config;
+package com.openclassrooms.paymybuddy.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

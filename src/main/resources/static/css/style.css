@@ -1,0 +1,33 @@
+@charset "ISO-8859-1";
+.outer-div {
+    padding: 80px;
+    display: flex;
+    justify-content: center;
+
+}
+.sign-in {
+    display: flex;
+    border: solid gray;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 100px;
+
+
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.badge-pmb {
+    background: linear-gradient(90deg, rgba(69,110,78,1) 1%, rgba(61,171,70,1) 26%, rgba(21,235,35,1) 66%);
+}
+h2 {
+    align-self: center;
+    padding-bottom: 40px;
+    padding-top: 5px;
+    
+}
+button {
+    align-self: center;
+}

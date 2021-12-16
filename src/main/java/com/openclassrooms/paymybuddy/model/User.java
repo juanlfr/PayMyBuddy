@@ -31,7 +31,7 @@ public class User implements UserDetails {
 	private String password;
 	private String firstName;
 	private String lastName;
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<Account> accounts;
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private Set<User> connections;

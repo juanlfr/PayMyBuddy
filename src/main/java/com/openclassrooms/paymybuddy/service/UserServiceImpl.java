@@ -1,5 +1,7 @@
 package com.openclassrooms.paymybuddy.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -7,7 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Sets;
 import com.openclassrooms.paymybuddy.model.Account;
 import com.openclassrooms.paymybuddy.model.User;
 import com.openclassrooms.paymybuddy.model.UserRole;
@@ -17,10 +18,12 @@ import com.openclassrooms.paymybuddy.repository.UserRepository;
 public class UserServiceImpl implements UserDetailsService, UserService {
 
 	private final PasswordEncoder passwordEncoder;
+	private AccountService accountService;
 
 	@Autowired
-	public UserServiceImpl(PasswordEncoder passwordEncoder) {
+	public UserServiceImpl(PasswordEncoder passwordEncoder, AccountService accountService) {
 		this.passwordEncoder = passwordEncoder;
+		this.accountService = accountService;
 	}
 
 	@Autowired
@@ -43,10 +46,21 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		user.setUserRole(UserRole.USER);
-		user.setAccounts(Sets.newHashSet(new Account(user)));
-		// TODO: creer une compte
 
-		return userRepository.save(user);
+		User savedUser = userRepository.save(user);
+
+		Account account = new Account(user);
+		accountService.createAccount(account);
+		// user.setAccounts(accounts);
+		// Set<Account> accounts = Sets.newHashSet(account);
+
+		return savedUser;
+	}
+
+	@Override
+	public Optional<User> getUserInfo(String userEmail) {
+
+		return userRepository.findByEmail(userEmail);
 	}
 
 }
