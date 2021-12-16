@@ -9,7 +9,7 @@
 	<h2 th:text="'Hello, ' + ${user.getFirstName} + '!'"></h2>
 	<div>
     <p>Spring Boot Security</p>
-    <form method="post" action="/logout">
+    <form method="post" th:action="@{/logout}">
         <button class="btn btn-primary btn-block" type="submit">Logout</button>
     </form>
 </div>

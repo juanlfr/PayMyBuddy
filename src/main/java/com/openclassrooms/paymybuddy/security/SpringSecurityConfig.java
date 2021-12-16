@@ -34,7 +34,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("/signUpForm", "/", "/logout").permitAll()
+				.antMatchers("/signUpForm", "/").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.formLogin()
@@ -49,7 +49,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.rememberMeParameter("remember-me")
 				.and()
 				.logout()
-				.logoutUrl("/logout");
+				.logoutUrl("/logout")
+				.clearAuthentication(true)
+				.invalidateHttpSession(true)
+				.deleteCookies("JSESSIONID", "remember-me")
+				.logoutSuccessUrl("/login");
 	}
 
 	@Override
