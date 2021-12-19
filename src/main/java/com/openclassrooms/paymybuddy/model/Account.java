@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,13 +23,13 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "account_id")
 	private Long accountId;
-	@OneToMany(mappedBy = "senderAccount", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "senderAccount", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Transaction> debitTransactions;
-	@OneToMany(mappedBy = "receiverAccount", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "receiverAccount", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Transaction> creditTransactions;
 	private double balance = 0;
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	public Account() {

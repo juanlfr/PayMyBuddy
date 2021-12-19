@@ -3,29 +3,24 @@ package com.openclassrooms.paymybuddy.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.openclassrooms.paymybuddy.model.Account;
 import com.openclassrooms.paymybuddy.model.User;
 import com.openclassrooms.paymybuddy.model.UserRole;
 import com.openclassrooms.paymybuddy.repository.UserRepository;
+import com.openclassrooms.paymybuddy.security.IAuthenticationFacade;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserService {
-
-	private final PasswordEncoder passwordEncoder;
-	private AccountService accountService;
-
 	@Autowired
-	public UserServiceImpl(PasswordEncoder passwordEncoder, AccountService accountService) {
-		this.passwordEncoder = passwordEncoder;
-		this.accountService = accountService;
-	}
-
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private IAuthenticationFacade authenticationFacade;
 	@Autowired
 	private UserRepository userRepository;
 
@@ -49,18 +44,30 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 		User savedUser = userRepository.save(user);
 
-		Account account = new Account(user);
-		accountService.createAccount(account);
+//		Account account = new Account(user);
+//		accountService.createAccount(account);
 		// user.setAccounts(accounts);
 		// Set<Account> accounts = Sets.newHashSet(account);
 
 		return savedUser;
 	}
 
-	@Override
-	public Optional<User> getUserInfo(String userEmail) {
+//	@Override
+//	public Optional<User> getUserInfo(String userEmail) {
+//
+//		return userRepository.findByEmail(userEmail);
+//	}
 
-		return userRepository.findByEmail(userEmail);
+	public User getCurrentUser() {
+		Authentication authentication = authenticationFacade.getAuthentication();
+		User user = (User) authentication.getPrincipal();
+		return user;
+
+	}
+
+	@Override
+	public Optional<User> getUserById(Long userId) {
+		return userRepository.findById(userId);
 	}
 
 }

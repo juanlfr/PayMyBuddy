@@ -6,17 +6,17 @@ import javax.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "account_id")
-public class BackAccount extends Account {
+public class BankAccount extends Account {
 
 	@Column(nullable = false)
 	private String iban;
 	private String bankName;
+	private double balance = 100;
 
-	public BackAccount() {
+	public BankAccount() {
 	}
 
-	public BackAccount(String iban, String bankName) {
-		super();
+	public BankAccount(String iban, String bankName) {
 		this.iban = iban;
 		this.bankName = bankName;
 	}
@@ -35,6 +35,19 @@ public class BackAccount extends Account {
 
 	public void setBankName(String bankName) {
 		this.bankName = bankName;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	@Override
+	public String toString() {
+		return "BankAccount [iban=" + iban + ", bankName=" + bankName + ", balance=" + balance + "]";
 	}
 
 }

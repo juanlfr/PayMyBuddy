@@ -1,18 +1,22 @@
 package com.openclassrooms.paymybuddy.controller;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.openclassrooms.paymybuddy.model.Account;
+import com.openclassrooms.paymybuddy.model.BankAccount;
 import com.openclassrooms.paymybuddy.model.User;
-import com.openclassrooms.paymybuddy.security.IAuthenticationFacade;
 import com.openclassrooms.paymybuddy.service.UserService;
 
 @Controller
@@ -21,13 +25,13 @@ public class UserController {
 	private static final Logger log = LogManager.getLogger(UserController.class);
 
 	@Autowired
-	private IAuthenticationFacade authenticationFacade;
-	@Autowired
 	private UserService userService;
+	@Autowired
+	private AccountController accountController;
 
 	@GetMapping("/")
 	public String home() {
-		return "index";
+		return "login";
 	}
 
 	@GetMapping("/signUpForm")
@@ -48,6 +52,7 @@ public class UserController {
 		try {
 
 			userService.createUser(user);
+			accountController.createAccount(user);
 			log.info("Creating user " + user);
 
 			redirectView.setUrl("/");
@@ -66,21 +71,39 @@ public class UserController {
 	}
 
 	@GetMapping("/welcome")
-	public ModelAndView welcomeRegisteredUser() {
+	public String welcomeRegisteredUser(Model model) {
 
-		String userEmail = currentUserNameSimple();
-		User user = userService.getUserInfo(userEmail).get();
-		ModelAndView welcomeMAV = new ModelAndView("welcome");
-		welcomeMAV.addObject("user", user);
+		log.info("**********This is de user controller *************");
 
-		return welcomeMAV;
+		User sessionUser = userService.getCurrentUser();
+		User userFromDB = userService.getUserById(sessionUser.getUserId()).get();
+		Set<Account> appAccounts = userFromDB.getAccounts();
+		Set<BankAccount> bankAccounts = new HashSet<>();
+		for (Iterator<Account> iterator = appAccounts.iterator(); iterator.hasNext();) {
+			Account account = iterator.next();
+			if (account instanceof BankAccount) {
+				bankAccounts.add((BankAccount) account);
+				iterator.remove();
+			}
+		}
+
+//		for (Account account : appAccounts) {
+//			if (account instanceof BankAccount) {
+//				bankAccounts.add((BankAccount) account);
+//				appAccounts.remove(account);
+//			}
+//		}
+		model.addAttribute("userFullName", sessionUser.getFirstName() + " " + sessionUser.getLastName());
+		model.addAttribute("appAccounts", appAccounts);
+		model.addAttribute("bankAccounts", bankAccounts);
+
+		return "welcome";
 	}
 
-	private String currentUserNameSimple() {
-		Authentication authentication = authenticationFacade.getAuthentication();
-		UserDetails user = (UserDetails) authentication.getPrincipal();
-		return user.getUsername();
-
+	@GetMapping("/home")
+	public String getHomePage() {
+		log.info("**********This is de user controller in the home method *************");
+		return "index";
 	}
 
 }
