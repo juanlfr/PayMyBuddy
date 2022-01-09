@@ -1,11 +1,57 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="template :: head"></head>
 <body>
-<h1>My bank Account</h1>
+	<h1>My bank Account</h1>
+	<section>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">Bank Account Number</th>
+					<th scope="col">Bank Account</th>
+					<th scope="col">Balance</th>
+					<th scope="col">Bank Name</th>
+				</tr>
+			</thead>
+			<tbody>
 
+				<tr>
+					<td><span th:text="${bankAccount.getAccountId()}"> </span></td>
+					<td><span th:text="${bankAccount.getIban()}"> </span></td>
+					<td><span th:text="${bankAccount.getBalance()}"> </span></td>
+					<td><span th:text="${bankAccount.getBankName()}"> </span></td>
+				</tr>
+
+
+			</tbody>
+		</table>
+	</section>
+	<section>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">Amount</th>
+					<th scope="col">Description</th>
+					<th scope="col">Date</th>
+					<th scope="col">ReceiverAccount</th>
+					<th scope="col">SenderAccount</th>
+					
+				</tr>
+			</thead>
+			<tbody>
+
+				<tr th:each="transaction : ${debitTransactions}" >
+					<td><span th:text="${transaction.getAmount()}"> </span></td>
+					<td><span th:text="${transaction.getDescription()}"> </span></td>
+					<td><span th:text="${transaction.getDate()}"> </span></td>
+					<td><span th:text="${transaction.getReceiverAccount()}"> </span></td>
+					<td><span th:text="${transaction.getSenderAccount()}"> </span></td>
+				</tr>
+
+
+			</tbody>
+		</table>
+
+	</section>
 </body>
 </html>

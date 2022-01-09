@@ -6,6 +6,49 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h1>Transactions</h1>
+    <main>
+        <h1>Transactions</h1>
+        <section>
+            <h5>Send money</h5>
+            <div>
+                <form method="get" th:action="@{/createConnection}">
+                    <button class="btn btn-primary btn-block" type="submit">Add
+                        Connection</button>
+                </form>
+            </div>
+            <form action="">
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option th:each=" connection :  ${userConnections}"
+                    th:value="${connection.getFirstName()}"
+					th:utext="${connection.getFirstName()}" /></option>
+                   
+                </select>
+                <input type="number" name="" id="">
+                <button class="btn btn-primary btn-block" type="submit">Valider </button>
+            </form>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Connections</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Amount</th>
+                    
+                    </tr>
+                </thead>
+                <tbody>
+
+<!--                     <tr th:each="transaction : ${transactions}"> -->
+<!--                         <td th:data-accountId="${bankAccount.getAccountId()}"><span -->
+<!--                             th:text="${bankAccount.getAccountId()}"> </span></td> -->
+<!--                         <td><span th:text="${bankAccount.getIban()}"> </span></td> -->
+<!--                         <td><span th:text="${bankAccount.getBalance()}"> </span></td> -->
+                    
+<!--                     </tr> -->
+                </tbody>
+            </table>
+        </section>
+        
+    </main>
 </body>
 </html>

@@ -45,7 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.usernameParameter("email")
 				.and()
 				.rememberMe()
-				.tokenValiditySeconds(30)
+				.tokenValiditySeconds(300)
 				.rememberMeParameter("remember-me")
 				.and()
 				.logout()

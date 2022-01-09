@@ -1,8 +1,8 @@
 /**
  * 
  */
-alert("js");
-var rows = document.getElementsByTagName("tr");
+alert("new js");
+var rows = document.getElementById("bankAccounts").rows;
 
 for (let i = 0; i < rows.length; i++) {
 	rows[i].addEventListener("click", () => {

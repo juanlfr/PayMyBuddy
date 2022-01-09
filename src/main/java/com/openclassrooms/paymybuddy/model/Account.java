@@ -79,10 +79,4 @@ public class Account {
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return "Account [accountId=" + accountId + ", debitTransactions=" + debitTransactions + ", creditTransactions="
-				+ creditTransactions + ", balance=" + balance + ", user=" + user + "]";
-	}
-
 }

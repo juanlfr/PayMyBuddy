@@ -70,4 +70,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		return userRepository.findById(userId);
 	}
 
+	@Override
+	public Optional<User> geUserByEmail(String email) {
+		Optional<User> userReturned = userRepository.findByEmail(email);
+		return userReturned;
+	}
+
+	@Override
+	public User updateUser(User userFromDB) {
+		User savedUser = userRepository.save(userFromDB);
+		return savedUser;
+	}
+
 }

@@ -7,7 +7,7 @@
 	<main>
 		<h2 th:text="'Hello, ' + ${userFullName} + '!'"></h2>
 		<section>
-			<table class="table table-hover">
+			<table class="table table-hover" id="appAccounts">
 				<thead>
 					<tr>
 						<th scope="col">Account</th>
@@ -16,14 +16,15 @@
 				</thead>
 				<tbody>
 					<tr th:each="account : ${appAccounts}">
-						<td><span th:text="${account.getAccountId()}"> </span></td>
+						<td><span th:data-accountId="${account.getAccountId()}"
+							th:text="${account.getAccountId()}"> </span></td>
 						<td><span th:text="${account.getBalance()}"> </span></td>
 					</tr>
 
 				</tbody>
 			</table>
 			<section>
-				<table class="table table-hover">
+				<table class="table table-hover" id="bankAccounts">
 					<thead>
 						<tr>
 							<th scope="col">Bank Account</th>
@@ -33,14 +34,15 @@
 						</tr>
 					</thead>
 					<tbody>
-					
-						<tr th:each="bankAccount : ${bankAccounts}" >
-							<td th:data-accountId="${bankAccount.getAccountId()}"><span th:text="${bankAccount.getAccountId()}"> </span></td>
+
+						<tr th:each="bankAccount : ${bankAccounts}">
+							<td th:data-accountId="${bankAccount.getAccountId()}"><span
+								th:text="${bankAccount.getAccountId()}"> </span></td>
 							<td><span th:text="${bankAccount.getIban()}"> </span></td>
 							<td><span th:text="${bankAccount.getBalance()}"> </span></td>
 							<td><span th:text="${bankAccount.getBankName()}"> </span></td>
 						</tr>
-					
+
 
 					</tbody>
 				</table>
@@ -53,6 +55,34 @@
 			<form method="get" th:action="@{/account/createBankAccount}">
 				<button class="btn btn-primary btn-block" type="submit">Add
 					bank account</button>
+			</form>
+		</div>
+		<div>
+			<form method="post"
+				th:action="@{/account/transfertMoneyBetweenAcounts}"
+				th:object=${transaction}>
+				<label>From: </label>
+				<select th:field="*{senderAccount}"
+					class="form-select">
+					<option value="">--</option>
+					<option th:each="account : ${accounts}"
+						th:value="${account.getAccountId()}"
+						th:utext="${account.getAccountId()}" />
+				</select> <label>To: </label> <select th:field="*{receiverAccount}"
+					class="form-select">
+					<option value="">--</option>
+					<option th:each="account : ${accounts}"
+						th:value="${account.getAccountId()}"
+						th:utext="${account.getAccountId()}" />
+				</select> <label>Amount </label> <input th:field="*{amount}" type="number"
+					class="form-control" /> <label for="story">Description</label>
+
+				<textarea th:field="*{description}" id="description" rows="5"
+					cols="33"></textarea>
+
+
+				<button class="btn btn-primary btn-block" type="submit">Valider
+				</button>
 			</form>
 		</div>
 

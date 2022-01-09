@@ -14,4 +14,8 @@ public interface UserService {
 	User getCurrentUser();
 
 	Optional<User> getUserById(Long userId);
+
+	Optional<User> geUserByEmail(String email);
+
+	User updateUser(User userFromDB);
 }

@@ -1,9 +1,12 @@
 package com.openclassrooms.paymybuddy.controller;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.openclassrooms.paymybuddy.model.Account;
 import com.openclassrooms.paymybuddy.model.BankAccount;
+import com.openclassrooms.paymybuddy.model.Transaction;
 import com.openclassrooms.paymybuddy.model.User;
 import com.openclassrooms.paymybuddy.service.AccountService;
 
@@ -57,9 +62,25 @@ public class AccountController {
 	}
 
 	@GetMapping("/myBankAccount/{id}")
-	public String getBankAccountInfo(@PathVariable("id") Long id) {
+	public String getBankAccountInfo(@PathVariable("id") Long id, Model model) {
 
+		Account bankAccount = accountService.getAccountById(id).get();
+		List<Transaction> creditTransactions = bankAccount.getCreditTransactions();
+		List<Transaction> debitTransactions = bankAccount.getDebitTransactions();
+		model.addAttribute("debitTransactions", debitTransactions);
+		model.addAttribute("creditTransactions", creditTransactions);
+		model.addAttribute("bankAccount", bankAccount);
 		return "MyBankAccount";
+
+	}
+
+	@PostMapping("/transfertMoneyBetweenAcounts")
+	public String transfertMoneyBetweenAcounts(Transaction transaction) {
+
+		// log.info("****Transaction from form *****" + transaction);
+		accountService.doTransaction(transaction);
+
+		return "redirect:/welcome";
 
 	}
 
