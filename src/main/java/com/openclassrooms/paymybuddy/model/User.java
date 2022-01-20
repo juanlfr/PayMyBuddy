@@ -31,9 +31,9 @@ public class User implements UserDetails {
 	private String password;
 	private String firstName;
 	private String lastName;
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	private Set<Account> accounts;
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
 	private Set<User> connections;
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole;

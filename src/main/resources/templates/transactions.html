@@ -16,17 +16,24 @@
                         Connection</button>
                 </form>
             </div>
-            <form action="">
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
+            <form method="post" th:action="@{/account/transfertMoneyBetweenAcounts}"
+            	 th:object=${transaction}>
+                <select th:field="*{receiverAccount}" class="form-select">
+                    <option value="">Select A Connection</option>
                     <option th:each=" connection :  ${userConnections}"
-                    th:value="${connection.getFirstName()}"
-					th:utext="${connection.getFirstName()}" /></option>
+                    th:value="${connection.getAccounts().stream().findFirst().get().getAccountId()}"
+					th:utext="${connection.getFirstName()} + ' ' + ${connection.getLastName()}" /></option>
                    
                 </select>
-                <input type="number" name="" id="">
+                <input type="hidden" th:value="${account.getAccountId()}" name="senderAccount" />
+                <input th:field="*{amount}" type="number" class="form-control" />
+                <label for="story">Description</label>
+				<textarea th:field="*{description}" id="description" rows="5"
+					cols="33"></textarea>
                 <button class="btn btn-primary btn-block" type="submit">Valider </button>
+            
             </form>
+            
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -38,13 +45,11 @@
                 </thead>
                 <tbody>
 
-<!--                     <tr th:each="transaction : ${transactions}"> -->
-<!--                         <td th:data-accountId="${bankAccount.getAccountId()}"><span -->
-<!--                             th:text="${bankAccount.getAccountId()}"> </span></td> -->
-<!--                         <td><span th:text="${bankAccount.getIban()}"> </span></td> -->
-<!--                         <td><span th:text="${bankAccount.getBalance()}"> </span></td> -->
-                    
-<!--                     </tr> -->
+                    <tr th:each="transaction : ${debitTransactions}">
+                        <td><span th:text="${transaction.getReceiverAccount().getUser().getFirstName()} + ' ' + ${transaction.getReceiverAccount().getUser().getLastName()}"> </span></td>
+                        <td><span th:text="${transaction.getDescription()}"> </span></td>
+                    	<td><span th:text="${transaction.getAmount()}"> </span></td>
+                    </tr>
                 </tbody>
             </table>
         </section>

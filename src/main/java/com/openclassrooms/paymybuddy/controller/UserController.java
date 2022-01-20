@@ -91,12 +91,6 @@ public class UserController {
 			}
 		}
 
-//		for (Account account : appAccounts) {
-//			if (account instanceof BankAccount) {
-//				bankAccounts.add((BankAccount) account);
-//				appAccounts.remove(account);
-//			}
-//		}
 		model.addAttribute("userFullName", sessionUser.getFirstName() + " " + sessionUser.getLastName());
 		model.addAttribute("appAccounts", appAccounts);
 		model.addAttribute("bankAccounts", bankAccounts);
@@ -110,17 +104,6 @@ public class UserController {
 	public String getHomePage() {
 		log.info("**********This is de user controller in the home method *************");
 		return "index";
-	}
-
-	@GetMapping("/transactions")
-	public String createConnection(Model model) {
-
-		User sessionUser = userService.getCurrentUser();
-		User userFromDB = userService.getUserById(sessionUser.getUserId()).get();
-		Set<User> userConnections = userFromDB.getConnections();
-		model.addAttribute("userConnections", userConnections);
-
-		return "transactions";
 	}
 
 	@GetMapping("/createConnection")
@@ -142,11 +125,17 @@ public class UserController {
 		if (registeredUser.isPresent()) {
 			Set<User> userConnections = userFromDB.getConnections();
 			userConnections.add(registeredUser.get());
+//			for (Iterator<User> iterator = userConnections.iterator(); iterator.hasNext();) {
+//				User user = (User) iterator.next();
+//				if (!user.equals(registeredUser.get())) {
+//					iterator.remove();
+//				}
+//			}
 			userService.updateUser(userFromDB);
 		} else {
-			// TODO
+			log.error("Email not found");
 		}
-		return "redirect:/transactions";
+		return String.format("redirect:account/transactions/%s", sessionUser.getUserId());
 
 	}
 
