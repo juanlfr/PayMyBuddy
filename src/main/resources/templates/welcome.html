@@ -1,100 +1,136 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhml"
-	xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhml" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="template :: head">
 </head>
+
 <body>
-	<main>
-		<h2 th:text="'Hello, ' + ${userFullName} + '!'"></h2>
-		<section>
-			<table class="table table-hover" id="appAccounts">
-				<thead>
-					<tr>
-						<th scope="col">Account</th>
-						<th scope="col">Balance</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="account : ${appAccounts}">
-						<td th:data-accountId="${account.getAccountId()}"
-							th:text="${account.getAccountId()}"></td>
-						<td><span th:text="${account.getBalance()}"> </span></td>
-					</tr>
-
-				</tbody>
-			</table>
-			<section>
-				<table class="table table-hover" id="bankAccounts">
-					<thead>
-						<tr>
-							<th scope="col">Bank Account</th>
-							<th scope="col">Bank Account</th>
-							<th scope="col">Balance</th>
-							<th scope="col">Bank Name</th>
-						</tr>
-					</thead>
-					<tbody>
-
-						<tr th:each="bankAccount : ${bankAccounts}">
-							<td th:data-accountId="${bankAccount.getAccountId()}"
-								th:text="${bankAccount.getAccountId()}"></td>
-							<td><span th:text="${bankAccount.getIban()}"> </span></td>
-							<td><span th:text="${bankAccount.getBalance()}"> </span></td>
-							<td><span th:text="${bankAccount.getBankName()}"> </span></td>
-						</tr>
-
-
-					</tbody>
-				</table>
-			</section>
-
-
-
-		</section>
-		<div>
-			<form method="get" th:action="@{/account/createBankAccount}">
-				<button class="btn btn-primary btn-block" type="submit">Add
-					bank account</button>
-			</form>
-		</div>
-		<div>
-			<form method="post"
-				th:action="@{/account/transfertMoneyBetweenAcounts}"
-				th:object=${transaction}>
-				<label>From: </label>
-				<select th:field="*{senderAccount}"
-					class="form-select">
-					<option value="">--</option>
-					<option th:each="account : ${accounts}"
-						th:value="${account.getAccountId()}"
-						th:utext="${account.getAccountId()}" />
-				</select> 
-				<label>To: </label> <select th:field="*{receiverAccount}"
-					class="form-select">
-					<option value="">--</option>
-					<option th:each="account : ${accounts}"
-						th:value="${account.getAccountId()}"
-						th:utext="${account.getAccountId()}" />
-				</select>
-				<label>Amount</label>
-				 <input th:field="*{amount}" type="number"
-					class="form-control" /> 
-				<label for="story">Description</label>
-				<textarea th:field="*{description}" id="description" rows="5"
-					cols="33"></textarea>
-
-
-				<button class="btn btn-primary btn-block" type="submit">Valider
+    <nav class="navbar navbar-expand-lg navbar-light"
+			style="background-color: #ffffff;">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#"><span class="badge badge-pmb">Pay
+						My Buddy</span></a>
+				<button class="navbar-toggler" type="button"
+					data-bs-toggle="collapse" data-bs-target="#navbarNav"
+					aria-controls="navbarNav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
 				</button>
-			</form>
-		</div>
+				<div class="collapse navbar-collapse d-flex flex-row-reverse"
+					id="navbarNav">
+					<ul class="navbar-nav">
+						<li class="nav-item"><a class="nav-link active"
+							aria-current="page" href="/welcome">Home</a></li>
+						<li class="nav-item"><a class="nav-link" th:href="${transferUrl}">Transfer</a>
+						</li>
+						<li class="nav-item"><a class="nav-link" href="#">Profile</a>
+						</li>
+						<li class="nav-item"><a class="nav-link" href="#">Contact</a>
+						</li>
+						<li class="nav-item">
+								<form id="logoff" method="post" th:action="@{/logout}">
+									<button class="nav-link" type="submit">Log off</button>
+								</form>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">Home /</a>
+				<button class="navbar-toggler" type="button"
+					data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+					aria-controls="navbarNavAltMarkup" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+					<div class="navbar-nav">
+						<a class="nav-link disabled" href="#" tabindex="-1"
+							aria-disabled="true">Transfer</a>
+					</div>
+				</div>
+			</div>
+		</nav>
+    <main>
+        <div class="container">
+            <h2 th:text="'Hello, ' + ${userFullName} + '!'"></h2>
+            <section>
+                <table class="table table-hover" id="appAccounts">
+                    <thead>
+                        <tr style="background-color: #5cb95c; color: #ffffff;">
+                            <th scope="col">Account</th>
+                            <th scope="col">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="account : ${appAccounts}">
+                            <td th:data-accountId="${account.getAccountId()}" th:text="${account.getAccountId()}"></td>
+                            <td><span th:text="${account.getBalance()}"> </span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <table class="table table-hover" id="bankAccounts">
+                    <thead>
+                        <tr style="background-color: #5cb95c; color: #ffffff;">
+                            <th scope="col">Bank Account Number</th>
+                            <th scope="col">IBAN</th>
+                            <th scope="col">Balance</th>
+                            <th scope="col">Bank Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-		<div>
-			<form method="post" th:action="@{/logout}">
-				<button class="btn btn-primary btn-block" type="submit">Logout</button>
-			</form>
-		</div>
-	</main>
+                        <tr th:each="bankAccount : ${bankAccounts}">
+                            <td th:data-accountId="${bankAccount.getAccountId()}"
+                                th:text="${bankAccount.getAccountId()}"></td>
+                            <td><span th:text="${bankAccount.getIban()}"> </span></td>
+                            <td><span th:text="${bankAccount.getBalance()}"> </span></td>
+                            <td><span th:text="${bankAccount.getBankName()}"> </span></td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <div>
+                    <form method="get" th:action="@{/account/createBankAccount}">
+                        <button class="btn btn-primary btn-block" type="submit">Add
+                            bank account</button>
+                    </form>
+                </div>
+            </section>
+
+
+            <section>
+                <div>
+                    <form method="post" th:action="@{/account/transfertMoneyBetweenAcounts}" th:object=${transaction}>
+                        <label>From: </label> <select th:field="*{senderAccount}" class="form-select">
+                            <option value="">--</option>
+                            <option th:each="account : ${accounts}" th:value="${account.getAccountId()}"
+                                th:utext="${account.getAccountId()}" />
+                        </select> <label>To: </label> <select th:field="*{receiverAccount}" class="form-select">
+                            <option value="">--</option>
+                            <option th:each="account : ${accounts}" th:value="${account.getAccountId()}"
+                                th:utext="${account.getAccountId()}" />
+                        </select> <label>Amount</label> <input th:field="*{amount}" type="number" class="form-control" />
+                        <label for="story">Description</label>
+                        <textarea th:field="*{description}" id="description" rows="5" cols="33"></textarea>
+    
+    
+                        <button class="btn btn-primary btn-block" type="submit">Valider
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
 </body>
 <script type="text/javascript" th:src="@{/js/script.js}"></script>
+
 </html>

@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 public class User implements UserDetails {
 
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
@@ -141,18 +142,9 @@ public class User implements UserDetails {
 	}
 
 	@Override
-	public String toString() {
-		return "User [userId=" + userId + ", email=" + email + ", password=" + password + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", accounts=" + accounts + ", connections=" + connections + ", userRole="
-				+ userRole + "" + "]";
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((accounts == null) ? 0 : accounts.hashCode());
-		result = prime * result + ((connections == null) ? 0 : connections.hashCode());
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
@@ -171,16 +163,6 @@ public class User implements UserDetails {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (accounts == null) {
-			if (other.accounts != null)
-				return false;
-		} else if (!accounts.equals(other.accounts))
-			return false;
-		if (connections == null) {
-			if (other.connections != null)
-				return false;
-		} else if (!connections.equals(other.connections))
-			return false;
 		if (email == null) {
 			if (other.email != null)
 				return false;
@@ -209,6 +191,12 @@ public class User implements UserDetails {
 		if (userRole != other.userRole)
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", connections=" + connections + ", userRole=" + userRole + "]";
 	}
 
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-alert(" newmodifica js");
+
 getAppAccounts ();
 getbankAccounts ();
 

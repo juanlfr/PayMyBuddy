@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -90,7 +91,9 @@ public class UserController {
 				iterator.remove();
 			}
 		}
-
+		String transferUrl = String.format("/account/transactions/%s",
+				appAccounts.stream().findFirst().get().getAccountId());
+		model.addAttribute("transferUrl", transferUrl);
 		model.addAttribute("userFullName", sessionUser.getFirstName() + " " + sessionUser.getLastName());
 		model.addAttribute("appAccounts", appAccounts);
 		model.addAttribute("bankAccounts", bankAccounts);
@@ -98,12 +101,6 @@ public class UserController {
 		model.addAttribute("transaction", new Transaction());
 
 		return "welcome";
-	}
-
-	@GetMapping("/home")
-	public String getHomePage() {
-		log.info("**********This is de user controller in the home method *************");
-		return "index";
 	}
 
 	@GetMapping("/createConnection")
@@ -125,17 +122,13 @@ public class UserController {
 		if (registeredUser.isPresent()) {
 			Set<User> userConnections = userFromDB.getConnections();
 			userConnections.add(registeredUser.get());
-//			for (Iterator<User> iterator = userConnections.iterator(); iterator.hasNext();) {
-//				User user = (User) iterator.next();
-//				if (!user.equals(registeredUser.get())) {
-//					iterator.remove();
-//				}
-//			}
 			userService.updateUser(userFromDB);
 		} else {
 			log.error("Email not found");
 		}
-		return String.format("redirect:account/transactions/%s", sessionUser.getUserId());
+		Stream<Account> appAcount = userFromDB.getAccounts().stream().filter(acct -> !(acct instanceof BankAccount));
+
+		return String.format("redirect:account/transactions/%s", appAcount.findFirst().get().getAccountId().toString());
 
 	}
 
