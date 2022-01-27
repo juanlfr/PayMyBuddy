@@ -2,6 +2,7 @@ package com.openclassrooms.paymybuddy.service;
 
 import java.util.Optional;
 
+import com.openclassrooms.paymybuddy.exception.InsufficientBalanceException;
 import com.openclassrooms.paymybuddy.model.Account;
 import com.openclassrooms.paymybuddy.model.BankAccount;
 import com.openclassrooms.paymybuddy.model.Transaction;
@@ -17,6 +18,6 @@ public interface AccountService {
 
 	Optional<Account> getAccountById(Long id);
 
-	void doTransaction(Transaction transaction);
+	void doTransaction(Transaction transaction) throws InsufficientBalanceException;
 
 }

@@ -108,8 +108,9 @@
 
 
             <section>
+            	<div th:if="${errorMessage!=null}" class="alert alert-danger" role="alert" th:utext="${errorMessage}">...</div>
                 <div>
-                    <form method="post" th:action="@{/account/transfertMoneyBetweenAcounts}" th:object=${transaction}>
+                    <form method="post" th:action="@{/account/transfertMoneyBetweenBankAcounts}" th:object=${transaction}>
                         <label>From: </label> <select th:field="*{senderAccount}" class="form-select">
                             <option value="">--</option>
                             <option th:each="account : ${accounts}" th:value="${account.getAccountId()}"
@@ -123,9 +124,8 @@
                         <textarea th:field="*{description}" id="description" rows="5" cols="33"></textarea>
     
     
-                        <button class="btn btn-primary btn-block" type="submit">Valider
-                        </button>
-                    </form>
+                        <button class="btn btn-primary btn-block" type="submit"> Valider </button>
+                    </form> 
                 </div>
             </section>
         </div>

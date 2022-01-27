@@ -1,5 +1,6 @@
 package com.openclassrooms.paymybuddy.controller;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.openclassrooms.paymybuddy.exception.InsufficientBalanceException;
 import com.openclassrooms.paymybuddy.model.Account;
 import com.openclassrooms.paymybuddy.model.BankAccount;
 import com.openclassrooms.paymybuddy.model.Transaction;
@@ -76,38 +79,65 @@ public class AccountController {
 
 	}
 
-	@GetMapping("/transactions/{id}")
-	public String createConnection(@PathVariable("id") Long id, Model model) {
+	@GetMapping("/transactions/{accountId}")
+	public String createConnection(@PathVariable("accountId") Long accountId, Model model, Principal principal) {
 
-		Account account = accountService.getAccountById(id).get();
-		List<Transaction> creditTransactions = account.getCreditTransactions();
-		List<Transaction> debitTransactions = account.getDebitTransactions().stream()
-				.filter(transaction -> !(transaction.getReceiverAccount() instanceof BankAccount))
-				.collect(Collectors.toList());
-		model.addAttribute("debitTransactions", debitTransactions);
-		model.addAttribute("creditTransactions", creditTransactions);
-		model.addAttribute("account", account);
-		Set<User> userConnections = account.getUser().getConnections();
-		for (User user : userConnections) {
-			Set<Account> appAcounts = user.getAccounts().stream().filter(acct -> !(acct instanceof BankAccount))
-					.collect(Collectors.toSet());
-			user.setAccounts(appAcounts);
+		Account account = accountService.getAccountById(accountId).get();
+
+		if (principal.getName().equals(account.getUser().getUsername())) {
+
+			List<Transaction> creditTransactions = account.getCreditTransactions();
+			List<Transaction> debitTransactions = account.getDebitTransactions().stream()
+					.filter(transaction -> !(transaction.getReceiverAccount() instanceof BankAccount))
+					.collect(Collectors.toList());
+			model.addAttribute("debitTransactions", debitTransactions);
+			model.addAttribute("creditTransactions", creditTransactions);
+			model.addAttribute("account", account);
+			Set<User> userConnections = account.getUser().getConnections();
+			for (User user : userConnections) {
+				Set<Account> appAcounts = user.getAccounts().stream().filter(acct -> !(acct instanceof BankAccount))
+						.collect(Collectors.toSet());
+				user.setAccounts(appAcounts);
+			}
+			model.addAttribute("userConnections", userConnections);
+			model.addAttribute("transaction", new Transaction());
+
+			return "transactions";
+		} else {
+			return "NotAllowedUserPage";
 		}
-		model.addAttribute("userConnections", userConnections);
-		model.addAttribute("transaction", new Transaction());
-
-		return "transactions";
 	}
 
 	@PostMapping("/transfertMoneyBetweenAcounts")
-	public String transfertMoneyBetweenAcounts(Transaction transaction) {
+	public String transfertMoneyBetweenAcounts(Transaction transaction, RedirectAttributes redirectAttributes) {
 
 		log.info("****Transaction *****");
 		if (transaction != null) {
-			accountService.doTransaction(transaction);
+			try {
+				accountService.doTransaction(transaction);
+				return "redirect:transactions/" + transaction.getSenderAccount().getAccountId();
+			} catch (InsufficientBalanceException e) {
+				log.error(e.getMessage());
+				redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+			}
+		}
+		return "redirect:transactions/" + transaction.getSenderAccount().getAccountId();
+	}
+
+	@PostMapping("/transfertMoneyBetweenBankAcounts")
+	public String transfertMoneyBetweenBankAcounts(Transaction transaction, RedirectAttributes redirectAttributes) {
+
+		log.info("****Transaction *****");
+		if (transaction != null) {
+			try {
+				accountService.doTransaction(transaction);
+				return "redirect:/welcome";
+			} catch (InsufficientBalanceException e) {
+				log.error(e.getMessage());
+				redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+			}
 		}
 		return "redirect:/welcome";
-
 	}
 
 }

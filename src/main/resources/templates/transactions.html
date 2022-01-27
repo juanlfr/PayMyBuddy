@@ -18,6 +18,7 @@
 							Connection</button>
 					</form>
 				</div>
+				<div th:if="${errorMessage!=null}" class="alert alert-danger" role="alert" th:utext="${errorMessage}"></div>
 				<div class="send-money">
 					<form method="post"
 						th:action="@{/account/transfertMoneyBetweenAcounts}"

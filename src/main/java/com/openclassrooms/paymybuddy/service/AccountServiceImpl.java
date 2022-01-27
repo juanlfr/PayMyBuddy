@@ -1,5 +1,6 @@
 package com.openclassrooms.paymybuddy.service;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.openclassrooms.paymybuddy.exception.InsufficientBalanceException;
 import com.openclassrooms.paymybuddy.model.Account;
@@ -29,6 +31,8 @@ public class AccountServiceImpl implements AccountService {
 	private IAccountFacade accountFacade;
 	@Autowired
 	private TransactionService transactionService;
+
+	private FacturationService facturationService;
 
 	@Override
 	public Account createAccount(User user) {
@@ -56,28 +60,28 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public void doTransaction(Transaction transaction) {
+	@Transactional(rollbackFor = { InsufficientBalanceException.class, SQLException.class })
+	public void doTransaction(Transaction transaction) throws InsufficientBalanceException {
 
 		Account senderAccount = transaction.getSenderAccount();
 		Account receieverAccount = transaction.getReceiverAccount();
 		double amount = transaction.getAmount();
 		double senderBalance = senderAccount.getBalance();
-
-		try {
-
-			if (senderBalance >= amount) {
-				senderAccount.setBalance(senderBalance - amount);
-				accountRepository.save(senderAccount);
-				receieverAccount.setBalance(receieverAccount.getBalance() + amount);
-				accountRepository.save(receieverAccount);
-				transaction.setDate(LocalDateTime.now());
-				transaction.setDescription(transaction.getDescription());
-				transactionService.createTransaction(transaction);
-			} else {
-				throw new InsufficientBalanceException("Insufficient account balance");
-			}
-		} catch (InsufficientBalanceException e) {
-			log.error("Error" + e.getMessage());
+		double transactionTaxedValue = amount * 0.005;
+		// Interface to implement in the future
+		// facturationService.sendTaxedValue(senderAccount.getAccountId(),
+		// transactionTaxedValue);
+		double senderBalanceWithTransactionTax = senderBalance - transactionTaxedValue;
+		if (senderBalanceWithTransactionTax >= amount && senderBalanceWithTransactionTax > 0) {
+			senderAccount.setBalance(senderBalanceWithTransactionTax - amount);
+			accountRepository.save(senderAccount);
+			receieverAccount.setBalance(receieverAccount.getBalance() + amount);
+			accountRepository.save(receieverAccount);
+			transaction.setDate(LocalDateTime.now());
+			transaction.setDescription(transaction.getDescription());
+			transactionService.createTransaction(transaction);
+		} else {
+			throw new InsufficientBalanceException("Insufficient account balance, transfer failed!");
 		}
 
 	}
