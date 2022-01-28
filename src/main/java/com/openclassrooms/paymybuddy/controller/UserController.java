@@ -6,11 +6,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.validation.Valid;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,19 +53,21 @@ public class UserController {
 	}
 
 	@PostMapping("/signUpForm")
-	public ModelAndView submitUserForm(User user) {
+	public ModelAndView submitUserForm(@Valid User user, BindingResult bindingResult) {
+
+		if (bindingResult.hasErrors()) {
+			return new ModelAndView("signUpForm");
+		}
 
 		RedirectView redirectView = new RedirectView();
 		try {
-
 			userService.createUser(user);
 			accountController.createAccount(user);
 			log.info("Creating user " + user);
+			redirectView.setUrl("/login");
 
-			redirectView.setUrl("/");
 		} catch (Exception e) {
 			log.error("Error creating user: " + e);
-			redirectView.setUrl("/error");
 		}
 
 		return new ModelAndView(redirectView);

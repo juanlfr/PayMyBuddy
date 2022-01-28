@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,8 +29,11 @@ public class User implements UserDetails {
 	@Column(name = "user_id")
 	private Long userId;
 	@Column(unique = true)
+	@NotBlank(message = "Please enter an email")
 	private String email;
+	@NotBlank(message = "Please enter a password")
 	private String password;
+	@NotBlank(message = "Please enter your first name")
 	private String firstName;
 	private String lastName;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
