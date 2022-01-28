@@ -44,19 +44,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
 		User savedUser = userRepository.save(user);
 
-//		Account account = new Account(user);
-//		accountService.createAccount(account);
-		// user.setAccounts(accounts);
-		// Set<Account> accounts = Sets.newHashSet(account);
-
 		return savedUser;
 	}
-
-//	@Override
-//	public Optional<User> getUserInfo(String userEmail) {
-//
-//		return userRepository.findByEmail(userEmail);
-//	}
 
 	public User getCurrentUser() {
 		Authentication authentication = authenticationFacade.getAuthentication();

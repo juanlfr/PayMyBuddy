@@ -17,6 +17,9 @@
 				<span class="badge badge-pmb">Pay My Buddy</span>
 			</h2>
 			<form th:action="@{/login}" method="post">
+				<div th:if="${param.error}">
+					<div class="alert alert-danger">Invalid email or password</div>
+				</div>
 				<div class="row mb-3">
 					<label for="email" class="col-sm-1 col-form-label"></label>
 					<div class="col-sm-10">
@@ -44,7 +47,7 @@
 				<button type="submit" class="btn btn-primary">Log in</button>
 			</form>
 			<form method="get" th:action="@{/signUpForm}" id="signup">
-				<button type="submit" class="btn btn-primary">Sing up</button>
+				<button type="submit" class="btn btn-primary">Sign up</button>
 			</form>
 
 		</div>

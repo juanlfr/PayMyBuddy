@@ -1,5 +1,8 @@
 package com.openclassrooms.paymybuddy.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -38,11 +41,13 @@ public class BankAccount extends Account {
 	}
 
 	public double getBalance() {
-		return balance;
+		BigDecimal bd = new BigDecimal(balance).setScale(2, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 	public void setBalance(double balance) {
-		this.balance = balance;
+		BigDecimal bd = new BigDecimal(balance).setScale(2, RoundingMode.HALF_UP);
+		this.balance = bd.doubleValue();
 	}
 
 	@Override

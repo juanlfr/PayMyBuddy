@@ -41,6 +41,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.loginPage("/login")
 				.permitAll()
 				.defaultSuccessUrl("/welcome", true)
+				.failureUrl("/login?error=true")
 				.passwordParameter("password")
 				.usernameParameter("email")
 				.and()
@@ -52,7 +53,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutUrl("/logout")
 				.clearAuthentication(true)
 				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID", "remember-me")
 				.logoutSuccessUrl("/login");
 	}
 
