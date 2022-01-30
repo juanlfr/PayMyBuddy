@@ -37,7 +37,7 @@
 								name="senderAccount" class="form-control" />
 							<div class="col-2">
 								<input th:field="*{amount}" type="number" class="form-control"
-									placeholder="0" />
+									placeholder="0€" />
 							</div>
 							<div class="col-4">
 								<input th:field="*{description}" id="description"
@@ -65,11 +65,9 @@
 
 						<tr th:each="transaction : ${debitTransactions}">
 							<td><span
-								th:text="${transaction.getReceiverAccount().getUser().getFirstName()} + ' ' + ${transaction.getReceiverAccount().getUser().getLastName()}">
-							</span></td>
-							<td><span th:text="${transaction.getDescription()}">
-							</span></td>
-							<td><span th:text="${transaction.getAmount()}"> </span></td>
+								th:text="${transaction.getReceiverAccount().getUser().getFirstName()} + ' ' + ${transaction.getReceiverAccount().getUser().getLastName()}"></span></td>
+							<td><span th:text="${transaction.getDescription()}"></span></td>
+							<td><span th:text="${transaction.getAmount()} + '€'"></span></td>
 						</tr>
 					</tbody>
 				</table>
